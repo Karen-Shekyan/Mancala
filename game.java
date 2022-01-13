@@ -5,7 +5,13 @@ public class game {
   //consider making board a global variable.
   //board has 2 rows and 7 columns.
   public static ArrayList<Integer> evaluate(int[][] board) {
-    int value = board[0][6]-board[1][6];
+    int value = 0;
+    //detect a win and return int max.
+    //detect a loss and return int min.
+    for (int i = 0; i < 7; i++) {
+      value += board[0][i];
+      value -= board[1][i];
+    }
 
     ArrayList<Integer> values = new ArrayList<Integer>();
     values.add(value);
@@ -25,101 +31,109 @@ public class game {
   //This structure is remarkably similar to the calculator the one used in polynomial evaluation (if written w/o recursion).
   //Though recursion has the same time/space complexity, it allows for pruning and is a "simple" dfs (and is neater).
   //depth starts at 0. maxDepth is the turns ahead it looks. Even is max, odd is min.
-  public static ArrayList<Integer> findTurn(int[][] board, int depth, int maxDepth) {
-    if (depth == maxDepth) {
-      return evaluate(board);
-    }
+  // public static ArrayList<Integer> findTurn(int[][] board, int depth, int maxDepth) {
+  //   if (depth == maxDepth) {
+  //     return evaluate(board);
+  //   }
+  //
+  //   else {
+  //     int upvalue;
+  //     if (depth%2 == 0) {
+  //       upvalue = Integer.MIN_VALUE;
+  //     }
+  //     else {
+  //       upvalue = Integer.MAX_VALUE;
+  //     }
+  //
+  //     ArrayList<ArrayList<Integer>> firstMoves = new ArrayList<ArrayList<Integer>>();
+  //
+  //     for (int i = 1; i < 7; i++) {
+  //       if (board[0][i-1] != 0) {
+  //         //do the move ArrayList thing.
+  //         int[][] boardc = new int[2][7];
+  //         for (int i = 0; i < 2; i++) {
+  //           for (int j = 0; j < 7; j++) {
+  //             boardc[i][j] = board[i][j];
+  //           }
+  //         }
+  //         boardc = doTurnC(boardc,i);
+  //
+  //         //check around this ^ line for extra turn.
+  //         int n = findTurn(boardc,depth+1,maxDepth).get(0);
+  //
+  //         if (depth%2 == 0) {
+  //           if (n > upvalue) {
+  //             upvalue = n;
+  //           }
+  //         }
+  //         else {
+  //           if (n < upvalue) {
+  //             upvalue = n;
+  //           }
+  //         }
+  //
+  //       }
+  //     }
+  //
+  //   }
+  //
+  //   return max(moves);
+  // }
 
-    else {
-      int upvalue;
-      if (depth%2 == 0) {
-        upvalue = Integer.MIN_VALUE;
-      }
-      else {
-        upvalue = Integer.MAX_VALUE;
-      }
+// //maybe make this check for invalid turns?...
+//   public static boolean extraTurn(int[][] board, ArrayList<Integer> wells) {
+//     int[][] boardc = new int[2][7];
+//     for (int i = 0; i < 2; i++) {
+//       for (int j = 0; j < 7; j++) {
+//         boardc[i][j] = board[i][j];
+//       }
+//     }
+//
+//     for (int i = 0; i < wells.size()-1; i++) {
+//       boardc = doTurnC(boardc,wells.get(i));
+//     }
+//
+//     int well = wells.get(wells.size()-1);
+//     return (boardc[well-1]%13 == 7-well);
+//   }
+// //...instead of this.
+//   public static ArrayList<ArrayList<Integer>> genMove(int[][] board) {
+//     ArrayList<ArrayList<Integer>> moves = new ArrayList<Integer>();
+//     for (int i = 1; i < 7; i++) {
+//       ArrayList<Integer> move = new ArrayList<Integer>();
+//       if (board[0][i-1] != 0) {
+//         move.add(i);
+//       }
+//       moves.add(move);
+//     }
+//
+//     boolean done = false;
+//     while (!done) {
+//       for (int i = 0; i < moves.size(); i++) {
+//         if (extraTurn(board,moves.get(i))) {
+//           ArrayList<Integer> move = new ArrayList<Integer>();
+//           for (int j = 0; j < moves.get(i).size(); j++) {
+//             move.add(moves.get(i).get(j));
+//           }
+//           moves.remove(i)
+//           i--;
+//           for (int j = 1; j < 7; j++) {
+//             if (board)
+//           }
+//         }
+//       }
+//     }
+//   }
 
-      ArrayList<ArrayList<Integer>> firstMoves = new ArrayList<ArrayList<Integer>>();
-
-      for (int i = 1; i < 7; i++) {
-        if (board[0][i-1] != 0) {
-          //do the move ArrayList thing.
-          int[][] boardc = new int[2][7];
-          for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 7; j++) {
-              boardc[i][j] = board[i][j];
-            }
-          }
-          boardc = doTurnC(boardc,i);
-
-          //check around this ^ line for extra turn.
-          int n = findTurn(boardc,depth+1,maxDepth).get(0);
-
-          if (depth%2 == 0) {
-            if (n > upvalue) {
-              upvalue = n;
-            }
-          }
-          else {
-            if (n < upvalue) {
-              upvalue = n;
-            }
-          }
-
-        }
-      }
-
-    }
-
-    return max(moves);
-  }
-
-//maybe make this check for invalid turns?...
-  public static boolean extraTurn(int[][] board, ArrayList<Integer> wells) {
-    int[][] boardc = new int[2][7];
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 7; j++) {
-        boardc[i][j] = board[i][j];
-      }
-    }
-
-    for (int i = 0; i < wells.size()-1; i++) {
-      boardc = doTurnC(boardc,wells.get(i));
-    }
-
-    int well = wells.get(wells.size()-1);
-    return (boardc[well-1]%13 == 7-well);
-  }
-//...instead of this.
-  public static ArrayList<ArrayList<Integer>> genMove(int[][] board) {
-    ArrayList<ArrayList<Integer>> moves = new ArrayList<Integer>();
+  public static ArrayList<Integer> moveSet(int[][] board) {
+    ArrayList<ArrayList<Integer>> allFirstMoves = new ArrayList<ArrayList<Integer>>();
     for (int i = 1; i < 7; i++) {
-      ArrayList<Integer> move = new ArrayList<Integer>();
-      if (board[0][i-1] != 0) {
-        move.add(i);
-      }
-      moves.add(move);
-    }
-
-    boolean done = false;
-    while (!done) {
-      for (int i = 0; i < moves.size(); i++) {
-        if (extraTurn(board,moves.get(i))) {
-          ArrayList<Integer> move = new ArrayList<Integer>();
-          for (int j = 0; j < moves.get(i).size(); j++) {
-            move.add(moves.get(i).get(j));
-          }
-          moves.remove(i)
-          i--;
-          for (int j = 1; j < 7; j++) {
-            if (board)
-          }
-        }
-      }
+      
     }
   }
 
 //Computer always moves row 0. The player going first only changes the search space, not what the algorithm does.
+//Consider making this take an ArrayList of moves.
   public static int[][] doTurnC(int[][] board, int well) {
     int stones = board[0][well-1];
     board[0][well-1] = 0;
