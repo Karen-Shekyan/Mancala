@@ -125,7 +125,7 @@ public class game {
 //     }
 //   }
 
-  public static ArrayList<Integer> moveSet(int[][] board) {
+  public static ArrayList<Integer> moveSet(int[][] board, ArrayList<Integer> move) {
     ArrayList<ArrayList<Integer>> allFirstMoves = new ArrayList<ArrayList<Integer>>();
     for (int i = 1; i < 7; i++) {
       
