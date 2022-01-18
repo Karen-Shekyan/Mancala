@@ -19,6 +19,25 @@ public class game {
     values.add(value);
     return values;
   }
+  //***********************************************************************************************************************************************************
+
+  public static int insertValues (ArrayList<ArrayList<Integer>> turns, int[][] board, int depth) {
+    for (int i = 0; i < turns.size(); i++) {
+      
+    }
+  }
+
+  public static ArrayList<Integer> findTurn (ArrayList<ArrayList<Integer>> turns) {
+    int index = 0;
+    int maxVal = turns.get(0).get(0);
+    for (int i = 1; i < turns.size(); i++) {
+      if (turns.get(i).get(0) > maxVal) {
+        maxVal = turns.get(i).get(0);
+        index = i;
+      }
+    }
+    return turns.get(index);
+  }
 
   public static boolean extraTurn (ArrayList<Integer> moves, int[][] board) {
     for (int i = 0; i < moves.size()-1; i++) {
