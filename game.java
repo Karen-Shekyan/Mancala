@@ -48,7 +48,7 @@ public class game {
       int max = Integer.MIN_VALUE;
       int index = -1;
       for (int i = 0; i < turns.size(); i++) {
-        int[][] newboard = doTurnC(int[][] board, turns.get(i));//THIS METHOD RETURNS A COPY!;
+        int[][] newboard = doTurnC(board, turns.get(i));//THIS METHOD RETURNS A COPY!;
         int value = value(newboard,depth+1,maxDepth);
         if (value > max) {
           max = value;
@@ -69,7 +69,7 @@ public class game {
       int min = Integer.MAX_VALUE;
       int index = -1;
       for (int i = 0; i < turns.size(); i++) {
-        int[][] newboard = doTurnP(int[][] board, turns.get(i));//THIS METHOD RETURNS A COPY!;
+        int[][] newboard = doTurnP(board, turns.get(i));//THIS METHOD RETURNS A COPY!;
         int value = value(newboard,depth+1,maxDepth);
         if (value < min) {
           min = value;
@@ -78,15 +78,13 @@ public class game {
       }
       return min;
     }
-
-    return Integer.MIN_VALUE;
   }
 //combine these? ^v
   public static ArrayList<Integer> findTurn(ArrayList<ArrayList<Integer>> turns, int[][] board, int maxDepth) {
     int max = Integer.MIN_VALUE;
     int index = -1;
     for (int i = 0; i < turns.size(); i++) {
-      int[][] newboard = doTurnC(int[][] board, turns.get(i));//THIS METHOD RETURNS A COPY!;
+      int[][] newboard = doTurnC(board, turns.get(i));//THIS METHOD RETURNS A COPY!;
       int value = value(newboard, 1, maxDepth);
       if (value > max) {
         max = value;
@@ -94,7 +92,7 @@ public class game {
       }
     }
 
-    return turns.get(i);
+    return turns.get(index);
   }
 
   public static boolean extraTurnP (ArrayList<Integer> moves, int[][] board) {
@@ -335,6 +333,21 @@ public class game {
 
   public static void main(String[] args) throws IOException {
     BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
+    //put this in a method.
+    // System.out.println("Input 1 to select easy difficulty, 2 to select medium, and 3 to select hard.");
+    // String input = f.readLine();
+    // if (input.equals("1")) {
+    //
+    // }
+    // else if (input.equals("2")) {
+    //
+    // }
+    // else if (input.equals("3")) {
+    //
+    // }
+    // else {
+    //
+    // }
     System.out.println("Input 1 to start game as player 1. Input 2 to start as player 2");//consider explaining rules.
     int[][] board = {
       {4,4,4,4,4,4,0},
@@ -343,7 +356,7 @@ public class game {
     for (int i = 0; i < 2; i++) {
       System.out.println(Arrays.toString(board[i]));
     }
-
+    int depth = 4;//REMOVE LATER #######################################################################################################################
     if (f.readLine().equals("1")) {
       boolean done = false;
       while (!done) {
@@ -361,6 +374,15 @@ public class game {
     }
     else if(!f.readLine().equals("2")) {//change from exception to asking again...
       throw new IllegalArgumentException ("You must enter \"1\" or \"2\" to begin as that player.");
+    }
+    else {//remove this. the while loop must start with Computer turn always.
+      ArrayList<Integer> turn = findTurn(moveSetC(board),board,depth);
+      for (int i = 0; i < turn.size(); i++) {
+        board = doMoveC(board,turn.get(i));
+        for (int i = 0; i < 2; i++) {
+          System.out.println(Arrays.toString(board[i]));
+        }
+      }
     }
 
     boolean done = false;
