@@ -2,54 +2,112 @@ import java.util.*;
 import java.io.*;
 
 public class game {
-  //consider making board a global variable.
   //board has 2 rows and 7 columns.
 
   //update this************************************************************************************************************************************************
-  public static ArrayList<Integer> evaluate(int[][] board) {
+  public static int evaluate(int[][] board) {
     int value = 0;
-    //detect a win and return int max.
-    //detect a loss and return int min.
+    boolean endGame = true;
     for (int i = 0; i < 7; i++) {
-      value += board[0][i];
-      value -= board[1][i];
+      int c = board[0][i];
+      int p = board[1][i];
+      value += c;
+      value -= p;
+      if (c != 0 || p != 0) {
+        endGame = false;
+      }
     }
 
-    ArrayList<Integer> values = new ArrayList<Integer>();
-    values.add(value);
-    return values;
+    if (endGame) {
+      if (value < 0) {
+        return Integer.MIN_VALUE;
+      }
+      else if (value > 0) {
+        return Integer.MAX_VALUE;
+      }
+    }
+
+    return value;
   }
   //***********************************************************************************************************************************************************
 
-  public static int insertValues (ArrayList<ArrayList<Integer>> turns, int[][] board, int depth) {
-    for (int i = 0; i < turns.size(); i++) {
-      
+//minimum values for depth and maxDepth is 1. You must look at least 1 turn ahead.
+  public static int value(int[][] board, int depth, int maxDepth) {
+    if (depth == maxDepth) {
+      return evaluate(board);
     }
-  }
 
-  public static ArrayList<Integer> findTurn (ArrayList<ArrayList<Integer>> turns) {
-    int index = 0;
-    int maxVal = turns.get(0).get(0);
-    for (int i = 1; i < turns.size(); i++) {
-      if (turns.get(i).get(0) > maxVal) {
-        maxVal = turns.get(i).get(0);
+    if (depth%2 == 0) {//want max here, computer moves.
+      int[][] boardc = new int[2][7];
+      for (int l = 0; l < 2; l++) {
+        for (int j = 0; j < 7; j++) {
+          boardc[l][j] = board[l][j];
+        }
+      }
+      ArrayList<ArrayList<Integer>> turns = moveSetC(boardc);
+      int max = Integer.MIN_VALUE;
+      int index = -1;
+      for (int i = 0; i < turns.size(); i++) {
+        int[][] newboard = doTurnC(int[][] board, turns.get(i));//THIS METHOD RETURNS A COPY!;
+        int value = value(newboard,depth+1,maxDepth);
+        if (value > max) {
+          max = value;
+          index = i;
+        }
+      }
+      return max;
+    }
+
+    else {//want min here, player moves.
+      int[][] boardc = new int[2][7];
+      for (int l = 0; l < 2; l++) {
+        for (int j = 0; j < 7; j++) {
+          boardc[l][j] = board[l][j];
+        }
+      }
+      ArrayList<ArrayList<Integer>> turns = moveSetP(boardc);
+      int min = Integer.MAX_VALUE;
+      int index = -1;
+      for (int i = 0; i < turns.size(); i++) {
+        int[][] newboard = doTurnP(int[][] board, turns.get(i));//THIS METHOD RETURNS A COPY!;
+        int value = value(newboard,depth+1,maxDepth);
+        if (value < min) {
+          min = value;
+          index = i;
+        }
+      }
+      return min;
+    }
+
+    return Integer.MIN_VALUE;
+  }
+//combine these? ^v
+  public static ArrayList<Integer> findTurn(ArrayList<ArrayList<Integer>> turns, int[][] board, int maxDepth) {
+    int max = Integer.MIN_VALUE;
+    int index = -1;
+    for (int i = 0; i < turns.size(); i++) {
+      int[][] newboard = doTurnC(int[][] board, turns.get(i));//THIS METHOD RETURNS A COPY!;
+      int value = value(newboard, 1, maxDepth);
+      if (value > max) {
+        max = value;
         index = i;
       }
     }
-    return turns.get(index);
+
+    return turns.get(i);
   }
 
-  public static boolean extraTurn (ArrayList<Integer> moves, int[][] board) {
+  public static boolean extraTurnP (ArrayList<Integer> moves, int[][] board) {
     for (int i = 0; i < moves.size()-1; i++) {
-      board = doTurnC(board,moves.get(i));
+      board = doMoveP(board,moves.get(i));
     }
     int well = moves.get(moves.size()-1);
-    boolean ans = (board[0][well-1]%13 == 7-well);
-    board = doTurnC(board,well);
+    boolean ans = (board[1][well-1]%13 == 7-well);
+    board = doMoveP(board,well);
     return ans;
   }
 
-  public static ArrayList<ArrayList<Integer>> moveSet(int[][] board) {
+  public static ArrayList<ArrayList<Integer>> moveSetP(int[][] board) {
     ArrayList<ArrayList<Integer>> allFirstMoves = new ArrayList<ArrayList<Integer>>();
     for (int i = 1; i < 7; i++) {
       if (board[0][i-1] != 0) {
@@ -69,9 +127,9 @@ public class game {
             boardc[l][j] = board[l][j];
           }
         }
-        if (extraTurn(allFirstMoves.get(i),boardc)) {
+        if (extraTurnP(allFirstMoves.get(i),boardc)) {
           done = false;
-          ArrayList<ArrayList<Integer>> movesAfter = moveSet(boardc);
+          ArrayList<ArrayList<Integer>> movesAfter = moveSetP(boardc);
 
           for (int j = 0; j < movesAfter.size(); j++) {
             ArrayList<Integer> newMove = new ArrayList<Integer>();
@@ -93,9 +151,89 @@ public class game {
     return allFirstMoves;
   }
 
-//Computer always moves row 0. The player going first only changes the search space, not what the algorithm does.
-//Consider making this take an ArrayList of moves.
-  public static int[][] doTurnC(int[][] board, int well) {
+  public static boolean extraTurnC (ArrayList<Integer> moves, int[][] board) {
+    for (int i = 0; i < moves.size()-1; i++) {
+      board = doMoveC(board,moves.get(i));
+    }
+    int well = moves.get(moves.size()-1);
+    boolean ans = (board[0][well-1]%13 == 7-well);
+    board = doMoveC(board,well);
+    return ans;
+  }
+
+  public static ArrayList<ArrayList<Integer>> moveSetC(int[][] board) {
+    ArrayList<ArrayList<Integer>> allFirstMoves = new ArrayList<ArrayList<Integer>>();
+    for (int i = 1; i < 7; i++) {
+      if (board[0][i-1] != 0) {
+        ArrayList<Integer> move = new ArrayList<Integer>();
+        move.add(i);
+        allFirstMoves.add(move);
+      }
+    }
+
+    boolean done = false;
+    while (!done) {
+      done = true;
+      for (int i = 0; i < allFirstMoves.size(); i++) {
+        int[][] boardc = new int[2][7];
+        for (int l = 0; l < 2; l++) {
+          for (int j = 0; j < 7; j++) {
+            boardc[l][j] = board[l][j];
+          }
+        }
+        if (extraTurnC(allFirstMoves.get(i),boardc)) {
+          done = false;
+          ArrayList<ArrayList<Integer>> movesAfter = moveSetC(boardc);
+
+          for (int j = 0; j < movesAfter.size(); j++) {
+            ArrayList<Integer> newMove = new ArrayList<Integer>();
+            for (int k = 0; k < allFirstMoves.get(i).size(); k++) {
+              newMove.add(allFirstMoves.get(i).get(k));
+            }
+
+            for (int k = 0; k < movesAfter.get(j).size(); k++) {
+              newMove.add(movesAfter.get(j).get(k));
+            }
+            allFirstMoves.add(newMove);
+          }
+
+          allFirstMoves.remove(i);
+          i--;
+        }
+      }
+    }
+    return allFirstMoves;
+  }
+
+  public static int[][] doTurnC(int[][] board, ArrayList<Integer> moves) {
+    int[][] boardc = new int[2][7];
+    for (int l = 0; l < 2; l++) {
+      for (int j = 0; j < 7; j++) {
+        boardc[l][j] = board[l][j];
+      }
+    }
+    for (int i = 0; i < moves.size(); i++) {
+      boardc = doMoveC(boardc, moves.get(i));
+    }
+
+    return boardc;
+  }
+
+  public static int[][] doTurnP(int[][] board, ArrayList<Integer> moves) {
+    int[][] boardc = new int[2][7];
+    for (int l = 0; l < 2; l++) {
+      for (int j = 0; j < 7; j++) {
+        boardc[l][j] = board[l][j];
+      }
+    }
+    for (int i = 0; i < moves.size(); i++) {
+      boardc = doMoveP(boardc, moves.get(i));
+    }
+
+    return boardc;
+  }
+
+  public static int[][] doMoveC(int[][] board, int well) {
     int stones = board[0][well-1];
     board[0][well-1] = 0;
     int curr = well;
@@ -128,7 +266,7 @@ public class game {
     return board;
   }
 
-  public static int[][] doTurnP(int[][] board, int well) {
+  public static int[][] doMoveP(int[][] board, int well) {
     if (well > 6 || well < 1) {
       return board;
     }
@@ -211,7 +349,7 @@ public class game {
       while (!done) {
         System.out.println("Your turn! Which well would you like to move?");
         int move = Integer.parseInt(f.readLine());
-        int[][] boardc = doTurnP(board,move);
+        int[][] boardc = doMoveP(board,move);
         if (board == boardc) {
           System.out.println("Wells are numbered 1 to 6 (inclusive). You entered " + move + ". Please enter a valid well.");
         }
