@@ -79,7 +79,7 @@ public class game {
       return min;
     }
   }
-//combine these? ^v
+
   public static ArrayList<Integer> findTurn(ArrayList<ArrayList<Integer>> turns, int[][] board, int maxDepth) {
     int max = Integer.MIN_VALUE;
     int index = -1;
@@ -265,17 +265,8 @@ public class game {
   }
 
   public static int[][] doMoveP(int[][] board, int well) {
-    if (well > 6 || well < 1) {
-      return board;
-    }
-    int[][] boardc = new int[2][7];
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 7; j++) {
-        boardc[i][j] = board[i][j];
-      }
-    }
-    int stones = boardc[1][well-1];
-    boardc[1][well-1] = 0;
+    int stones = board[1][well-1];
+    board[1][well-1] = 0;
     int curr = well;
     while (stones != 0) {
       if (curr >= 1) {
@@ -300,10 +291,10 @@ public class game {
       else {
         row = 1;
       }
-      boardc[row][col]++;
+      board[row][col]++;
       stones--;
     }
-    return boardc;
+    return board;
   }
 
 //needs testing
@@ -331,68 +322,135 @@ public class game {
     }
   }
 
+//returns maxDepth. returns -1 for invalid input.
+//adjust the output values.
+  public static int difficulty(String input) {
+    if (input.equals("1")) {
+      return 2;
+    }
+    else if (input.equals("2")) {
+      return 4;
+    }
+    else if (input.equals("3")) {
+      return 6;
+    }
+    else {
+      System.out.println("Please enter a valid difficulty.");
+      return -1;
+    }
+  }
+//-1 for invalid (any reason). 0 for end of turn. 1 for extra move.
+  public static int playerTurn(String input, int[][] board) {
+    int well = Integer.parseInt(input);
+    if (well > 6 || well < 1 ||( board[1][well-1] == 0)) {
+      return -1;
+    }
+    ArrayList<Integer> moves = new ArrayList<Integer>();
+    moves.add(well);
+    if (extraTurnP(moves,board)) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
   public static void main(String[] args) throws IOException {
     BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
-    //put this in a method.
-    // System.out.println("Input 1 to select easy difficulty, 2 to select medium, and 3 to select hard.");
-    // String input = f.readLine();
-    // if (input.equals("1")) {
-    //
-    // }
-    // else if (input.equals("2")) {
-    //
-    // }
-    // else if (input.equals("3")) {
-    //
-    // }
-    // else {
-    //
-    // }
-    System.out.println("Input 1 to start game as player 1. Input 2 to start as player 2");//consider explaining rules.
+
+    System.out.println("Welcome to Mancalla. Please input 1 to play on easy, 2 to play on medium, or 3 to play on hard.");
+    String input = "";
+    int maxDepth = -1;
+    while (maxDepth == -1) {
+      input = f.readLine();
+      maxDepth = difficulty(input);
+    }
+
     int[][] board = {
       {4,4,4,4,4,4,0},
       {4,4,4,4,4,4,0}
     };
-    for (int i = 0; i < 2; i++) {
-      System.out.println(Arrays.toString(board[i]));
-    }
-    int depth = 4;//REMOVE LATER #######################################################################################################################
-    if (f.readLine().equals("1")) {
-      boolean done = false;
-      while (!done) {
-        System.out.println("Your turn! Which well would you like to move?");
-        int move = Integer.parseInt(f.readLine());
-        int[][] boardc = doMoveP(board,move);
-        if (board == boardc) {
-          System.out.println("Wells are numbered 1 to 6 (inclusive). You entered " + move + ". Please enter a valid well.");
+
+    System.out.println("Input 1 to start as player 1 or 2 to start as player 2.");
+
+    boolean done = false;
+    while (!done) {
+      input = f.readLine();
+      if (input.equals("1")) {
+        System.out.println("Your turn!");
+        for (int i = 0; i < 2; i++) {
+          System.out.println(Arrays.toString(board[i]));
         }
-        else {
-          done = true;
+        int P = 1;
+        while (P != 0) {
+          input = f.readLine();
+          P = playerTurn(input,board);
+          if (P == -1) {
+            System.out.println("Wells are numbered 1 to 6 (inclusive) and must contain at least 1 stone to be a valid move. Your input: " + input);
+          }
+          if (P == 1) {
+            System.out.println("Extra turn!");
+          }
+          for (int i = 0; i < 2; i++) {
+            System.out.println(Arrays.toString(board[i]));
+          }
         }
-        board = boardc;
+        done = true;
+      }
+
+      else if (input.equals("2")) {
+        done = true;
+      }
+
+      else {
+        System.out.println("Please input either 1 to start as player 1 or 2 to start as player 2. Your input: " + input);
       }
     }
-    else if(!f.readLine().equals("2")) {//change from exception to asking again...
-      throw new IllegalArgumentException ("You must enter \"1\" or \"2\" to begin as that player.");
-    }
-    else {//remove this. the while loop must start with Computer turn always.
-      ArrayList<Integer> turn = findTurn(moveSetC(board),board,depth);
-      for (int i = 0; i < turn.size(); i++) {
-        board = doMoveC(board,turn.get(i));
+
+    done = false;
+    while (!done) {
+      System.out.println("Opponent's turn!");
+      ArrayList<Integer> turn = findTurn(moveSetC(board), board, maxDepth);
+      for (int j = 0; j < turn.size(); j++) {
+        board = doMoveC(board,turn.get(j));
+        for (int i = 0; i < 2; i++) {
+          System.out.println(Arrays.toString(board[i]));
+        }
+        if (j != turn.size()-1) {
+          System.out.println("Extra turn!");
+        }
+      }
+
+      System.out.println("Your turn!");
+      for (int i = 0; i < 2; i++) {
+        System.out.println(Arrays.toString(board[i]));
+      }
+      int P = 1;
+      while (P != 0) {
+        input = f.readLine();
+        P = playerTurn(input,board);
+        if (P == -1) {
+          System.out.println("Wells are numbered 1 to 6 (inclusive) and must contain at least 1 stone to be a valid move. Your input: " + input);
+        }
+        if (P == 1) {
+          System.out.println("Extra turn!");
+        }
         for (int i = 0; i < 2; i++) {
           System.out.println(Arrays.toString(board[i]));
         }
       }
-    }
 
-    boolean done = false;
-    while (!done) {
-      for (int i = 0; i < 2; i++) {
-        System.out.println(Arrays.toString(board[i]));
+      boolean donec = true;
+      boolean donep = true;
+      for (int i = 0; i < 6; i++) {
+        if (board[0][i] != 0) {
+          donec = false;
+        }
+        if (board[1][i] != 0) {
+          donep = false;
+        }
       }
-
-
-      done = true;
+      done = donec || donep;
     }
 
     endGame(board);
