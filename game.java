@@ -258,8 +258,16 @@ public class game {
       else {
         row = 0;
       }
-      board[row][col]++;
       stones--;
+      board[row][col]++;
+
+      if (stones == 0) {
+        if (col != 6 && row == 0 && board[row][col] == 1 && board[1][5-col] != 0) {
+          board[row][6] = board[row][6] + 1 + board[1][5-col];
+          board[1][5-col] = 0;
+          board[row][col] = 0;
+        }
+      }
     }
     return board;
   }
@@ -293,6 +301,14 @@ public class game {
       }
       board[row][col]++;
       stones--;
+
+      if (stones == 0) {
+        if (col != 6 && row == 1 && board[row][col] == 1 && board[0][5-col] != 0) {
+          board[row][6] = board[row][6] + 1 + board[0][5-col];
+          board[0][5-col] = 0;
+          board[row][col] = 0;
+        }
+      }
     }
     return board;
   }
@@ -323,7 +339,7 @@ public class game {
   }
 
 //returns maxDepth. returns -1 for invalid input.
-//adjust the output values.
+//adjust the output values (currently 2/4/6).
   public static int difficulty(String input) {
     if (input.equals("1")) {
       return 2;
@@ -378,9 +394,14 @@ public class game {
       input = f.readLine();
       if (input.equals("1")) {
         System.out.println("Your turn!");
-        for (int i = 0; i < 2; i++) {
-          System.out.println(Arrays.toString(board[i]));
+        for (int i = 6; i >= 0; i--) {
+          System.out.print(board[0][i] + " ");
         }
+        System.out.print("\n  ");
+        for (int i = 0; i < 7; i++) {
+          System.out.print(board[1][i] + " ");
+        }
+        System.out.println();
         int P = 1;
         while (P != 0) {
           input = f.readLine();
@@ -391,9 +412,15 @@ public class game {
           if (P == 1) {
             System.out.println("Extra turn!");
           }
-          for (int i = 0; i < 2; i++) {
-            System.out.println(Arrays.toString(board[i]));
+
+          for (int i = 6; i >= 0; i--) {
+            System.out.print(board[0][i] + " ");
           }
+          System.out.print("\n  ");
+          for (int i = 0; i < 7; i++) {
+            System.out.print(board[1][i] + " ");
+          }
+          System.out.println();
         }
         done = true;
       }
@@ -413,18 +440,32 @@ public class game {
       ArrayList<Integer> turn = findTurn(moveSetC(board), board, maxDepth);
       for (int j = 0; j < turn.size(); j++) {
         board = doMoveC(board,turn.get(j));
-        for (int i = 0; i < 2; i++) {
-          System.out.println(Arrays.toString(board[i]));
+
+        for (int i = 6; i >= 0; i--) {
+          System.out.print(board[0][i] + " ");
         }
+        System.out.print("\n  ");
+        for (int i = 0; i < 7; i++) {
+          System.out.print(board[1][i] + " ");
+        }
+        System.out.println();
+
         if (j != turn.size()-1) {
           System.out.println("Extra turn!");
         }
       }
 
       System.out.println("Your turn!");
-      for (int i = 0; i < 2; i++) {
-        System.out.println(Arrays.toString(board[i]));
+
+      for (int i = 6; i >= 0; i--) {
+        System.out.print(board[0][i] + " ");
       }
+      System.out.print("\n  ");
+      for (int i = 0; i < 7; i++) {
+        System.out.print(board[1][i] + " ");
+      }
+      System.out.println();
+      
       int P = 1;
       while (P != 0) {
         input = f.readLine();
@@ -435,9 +476,15 @@ public class game {
         if (P == 1) {
           System.out.println("Extra turn!");
         }
-        for (int i = 0; i < 2; i++) {
-          System.out.println(Arrays.toString(board[i]));
+
+        for (int i = 6; i >= 0; i--) {
+          System.out.print(board[0][i] + " ");
         }
+        System.out.print("\n  ");
+        for (int i = 0; i < 7; i++) {
+          System.out.print(board[1][i] + " ");
+        }
+        System.out.println();
       }
 
       boolean donec = true;
