@@ -41,12 +41,12 @@ function draw() {
     ctx.globalAlpha = 0.2;
     //ctx.fillStyle = "rgba(200,0,0,1)"; //globalAlpha overrides this one
     // var l = ctx.createLinearGradient(150,150,300,300);
-    // l.addColorStop(0,'white');
+    // l.addColorStop(0,'blue');
     // l.addColorStop(1,'red');
     // ctx.fillStyle = l;
 
     var l = ctx.createRadialGradient(150,150,0,150,150,100);
-    l.addColorStop(0,'white');
+    l.addColorStop(0,'blue');
     l.addColorStop(1,'red');
     ctx.fillStyle = l;
 
