@@ -3,7 +3,7 @@ import java.io.*;
 
 public class game {
   //board has 2 rows and 7 columns.
-
+//ADD BAD INPUT DETECTION TO PLAYER INPUT WHEN PLAYING=================================================
   //update this************************************************************************************************************************************************
   public static int evaluate(int[][] board) {
     int value = 0;
@@ -11,8 +11,15 @@ public class game {
     for (int i = 0; i < 7; i++) {
       int c = board[0][i];
       int p = board[1][i];
-      value += c;
-      value -= p;
+      if (i == 6) {
+        value += 2*c;
+        value -= 2*p;
+      }
+      else {
+        value += c;
+        value -= p;
+      }
+
       if (c != 0 || p != 0) {
         endGame = false;
       }
@@ -67,7 +74,7 @@ public class game {
       }
       ArrayList<ArrayList<Integer>> turns = moveSetP(boardc);
       int min = Integer.MAX_VALUE;
-      int index = -1;
+      int index = 0;
       for (int i = 0; i < turns.size(); i++) {
         int[][] newboard = doTurnP(board, turns.get(i));//THIS METHOD RETURNS A COPY!;
         int value = value(newboard,depth+1,maxDepth);
@@ -82,7 +89,7 @@ public class game {
 
   public static ArrayList<Integer> findTurn(ArrayList<ArrayList<Integer>> turns, int[][] board, int maxDepth) {
     int max = Integer.MIN_VALUE;
-    int index = -1;
+    int index = 0;
     for (int i = 0; i < turns.size(); i++) {
       int[][] newboard = doTurnC(board, turns.get(i));//THIS METHOD RETURNS A COPY!;
       int value = value(newboard, 1, maxDepth);
@@ -348,7 +355,7 @@ public class game {
       return 4;
     }
     else if (input.equals("3")) {
-      return 6;
+      return 8;
     }
     else {
       System.out.println("Please enter a valid difficulty.");
@@ -374,7 +381,7 @@ public class game {
   public static void main(String[] args) throws IOException {
     BufferedReader f = new BufferedReader(new InputStreamReader(System.in));
 
-    System.out.println("Welcome to Mancalla. Please input 1 to play on easy, 2 to play on medium, or 3 to play on hard.");
+    System.out.println("Welcome to Mancala. Please input 1 to play on easy, 2 to play on medium, or 3 to play on hard.");
     String input = "";
     int maxDepth = -1;
     while (maxDepth == -1) {
@@ -395,11 +402,11 @@ public class game {
       if (input.equals("1")) {
         System.out.println("Your turn!");
         for (int i = 6; i >= 0; i--) {
-          System.out.print(board[0][i] + " ");
+          System.out.printf("%2d ", board[0][i]);
         }
-        System.out.print("\n  ");
+        System.out.print("\n   ");
         for (int i = 0; i < 7; i++) {
-          System.out.print(board[1][i] + " ");
+          System.out.printf("%2d ", board[1][i]);
         }
         System.out.println();
         int P = 1;
@@ -414,11 +421,11 @@ public class game {
           }
 
           for (int i = 6; i >= 0; i--) {
-            System.out.print(board[0][i] + " ");
+            System.out.printf("%2d ", board[0][i]);
           }
-          System.out.print("\n  ");
+          System.out.print("\n   ");
           for (int i = 0; i < 7; i++) {
-            System.out.print(board[1][i] + " ");
+            System.out.printf("%2d ", board[1][i]);
           }
           System.out.println();
         }
@@ -442,11 +449,11 @@ public class game {
         board = doMoveC(board,turn.get(j));
 
         for (int i = 6; i >= 0; i--) {
-          System.out.print(board[0][i] + " ");
+          System.out.printf("%2d ", board[0][i]);
         }
-        System.out.print("\n  ");
+        System.out.print("\n   ");
         for (int i = 0; i < 7; i++) {
-          System.out.print(board[1][i] + " ");
+          System.out.printf("%2d ", board[1][i]);
         }
         System.out.println();
 
@@ -458,14 +465,14 @@ public class game {
       System.out.println("Your turn!");
 
       for (int i = 6; i >= 0; i--) {
-        System.out.print(board[0][i] + " ");
+        System.out.printf("%2d ", board[0][i]);
       }
-      System.out.print("\n  ");
+      System.out.print("\n   ");
       for (int i = 0; i < 7; i++) {
-        System.out.print(board[1][i] + " ");
+        System.out.printf("%2d ", board[1][i]);
       }
       System.out.println();
-      
+
       int P = 1;
       while (P != 0) {
         input = f.readLine();
@@ -478,11 +485,11 @@ public class game {
         }
 
         for (int i = 6; i >= 0; i--) {
-          System.out.print(board[0][i] + " ");
+          System.out.printf("%2d ", board[0][i]);
         }
-        System.out.print("\n  ");
+        System.out.print("\n   ");
         for (int i = 0; i < 7; i++) {
-          System.out.print(board[1][i] + " ");
+          System.out.printf("%2d ", board[1][i]);
         }
         System.out.println();
       }

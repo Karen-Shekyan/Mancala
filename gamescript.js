@@ -39,12 +39,13 @@ function draw() {
     // ctx.fill();
 //draw flower shape
     ctx.globalAlpha = 0.2;
-    //ctx.fillStyle = "rgba(200,0,0,1)"; //globalAlpha overrides this one
+    // ctx.fillStyle = "rgba(200,0,0,1)"; //globalAlpha overrides this one
     // var l = ctx.createLinearGradient(150,150,300,300);
     // l.addColorStop(0,'blue');
     // l.addColorStop(1,'red');
     // ctx.fillStyle = l;
 
+    //createRadialGradient(h1,k1,r1,h2,k2,r2)
     var l = ctx.createRadialGradient(150,150,0,150,150,100);
     l.addColorStop(0,'blue');
     l.addColorStop(1,'red');
@@ -71,5 +72,22 @@ function draw() {
       ctx.closePath();
       ctx.fill();
     }
+
+//night sky
+    // var l = ctx.createRadialGradient(275,25,10,275,25,150);
+    // l.addColorStop(0,'#0000ff');
+    // l.addColorStop(1,'#000066');
+    // ctx.fillStyle = l;
+    // ctx.fillRect(0,0,300,300);
+    //
+    // function star() {
+    //   ctx.beginPath();
+    //   var r = Math.floor(Math.random()*4+1);
+    //   var h = Math.floor(Math.random()*290+5);
+    //   var k = Math.floor(Math.random()*290+5);
+    //
+    //   ctx.moveTo(h,k);
+    //
+    // }
   }
 }
